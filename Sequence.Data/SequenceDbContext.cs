@@ -8,6 +8,7 @@ namespace Sequence.Data
     public class SequenceDbContext : DbContext
     {
         public DbSet<ProcessedSequence> ProcessedSequences { get; set;  }
+        public DbSet<Batch> Batches { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

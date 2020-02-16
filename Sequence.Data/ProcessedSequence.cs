@@ -6,7 +6,7 @@ namespace Sequence.Data
 {
     public class ProcessedSequence
     {
-        public double Id { get; set; }
+        public int Id { get; set; }
         public double Unsorted { get; set; }
         public double Sorted { get; set; }
     }
