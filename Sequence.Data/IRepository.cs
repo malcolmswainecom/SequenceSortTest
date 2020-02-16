@@ -6,9 +6,8 @@ namespace Sequence.Data
 {
     public interface IRepository
     {
-        IEnumerable<ProcessedSequence> FindBySequence(IEnumerable<double> sequence);
-        IEnumerable<ProcessedSequence> GetLatest();
-        IEnumerable<ProcessedSequence> Save(IEnumerable<double> sequence, IEnumerable<double> sortedSequence); // not sure if this is pure enough
-        
+        ProcessedSequence FindByUnsorted(IList<double> unsorted);
+        ProcessedSequence GetLatest();
+        ProcessedSequence Save(IList<double> unsorted, IList<double> sorted);
     }
 }

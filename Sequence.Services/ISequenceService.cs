@@ -8,8 +8,7 @@ namespace Sequence.Services
 {
     public interface ISequenceService
     {
-        IEnumerable<ProcessedSequence> GetLatest();
-        IEnumerable<ProcessedSequence> SaveIfNotExists(IEnumerable<double> sequence);
-        
+        ProcessedSequence GetLatest();
+        ProcessedSequence SaveIfNotExists(IList<double> unsorted);
     }
 }

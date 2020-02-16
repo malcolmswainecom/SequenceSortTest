@@ -19,21 +19,6 @@ namespace Sequence.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Sequence.Data.Batch", b =>
-                {
-                    b.Property<int>("BatchId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("BatchId");
-
-                    b.ToTable("Batches");
-                });
-
             modelBuilder.Entity("Sequence.Data.ProcessedSequence", b =>
                 {
                     b.Property<int>("Id")
@@ -41,14 +26,14 @@ namespace Sequence.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BatchId")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<double>("Sorted")
-                        .HasColumnType("float");
+                    b.Property<string>("Sorted")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Unsorted")
-                        .HasColumnType("float");
+                    b.Property<string>("Unsorted")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

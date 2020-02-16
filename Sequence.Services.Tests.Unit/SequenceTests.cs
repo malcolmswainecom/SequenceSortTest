@@ -14,25 +14,25 @@ namespace Sequence.Services.Tests.Unit
         [Fact]
         public void SaveNewSequence_Expect_NewSequenceToBeReturnedFromCreate()
         {
-            var sequence = new List<double>{ 1, 2, 3 };
+            var unsorted = new List<double> { 1, 2, 3 };
 
             var sequenceService = new SequenceService(repository);
-            var sut = sequenceService.SaveIfNotExists(sequence)?.ToList();
+            var sut = sequenceService.SaveIfNotExists(unsorted);
 
             Assert.NotNull(sut);
-            Assert.True(sut.Select(x => x.Unsorted).All(sequence.Contains));
+            Assert.Equal(sut.Unsorted, unsorted);
         }
 
         [Fact]
         public void TwoSequencesSameNumbers_Expect_SequenceExists_ToBeTrue()
         {
-            var sequence = new List<double> { 3, 2, 1 };
-            var orderedSequence = new List<double> { 1, 2, 3 };
+            var unsorted = "3,2,1";
+            var sorted = "1,2,3";
 
             var sequenceService = new SequenceService(repository);
-            var sut = sequenceService.SaveIfNotExists(sequence)?.ToList();
+            var sut = sequenceService.SaveIfNotExists(unsorted);
 
-            Assert.True(sut.Select(x => x.Sorted).SequenceEqual(orderedSequence));
+            Assert.Equal(sut.Sorted, sorted);
         }
     }
 }

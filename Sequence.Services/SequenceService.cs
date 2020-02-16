@@ -8,72 +8,40 @@ namespace Sequence.Services
 {
     public class SequenceService : ISequenceService
     {
-        // needs to be injected
-        //SequenceResult[] CachedSequences = { };
-        
         IRepository repository;
-
 
         public SequenceService(IRepository _repository)
         {
             repository = _repository;
         }
         
-        public IEnumerable<ProcessedSequence> GetLatest()
+        public ProcessedSequence GetLatest()
         {
             return repository.GetLatest();
         }
 
-        public IEnumerable<ProcessedSequence> SaveIfNotExists(IEnumerable<double> sequence)
+        public ProcessedSequence SaveIfNotExists(IList<double> unsorted)
         {
-            var existingSequence = repository.FindBySequence(sequence);
-
-            // if it doesn't exist
-            if (existingSequence == null)
+            var existing = repository.FindByUnsorted(unsorted);
+            if (existing != null)
             {
-                var sortedSequence = Sort(sequence);
-                return repository.Save(sequence, sortedSequence);
+                return existing;
             }
-
-            return existingSequence;
+            else 
+            {
+                var sorted = Sort(unsorted);
+                return repository.Save(unsorted, sorted);
+            }
         }
 
-
-        //public int FindIndex(int[] sequence) 
-        //{
-        //    // maybe use parallel task lib here
-        //    int matchingIndex = -1;
-        //    bool found = false;
-
-
-        //    for (int i = 0; i < CachedSequences.Length; i++)
-        //    {
-        //        for (int j = 0; j < CachedSequences[i].Raw.Length; j++)
-        //        {
-        //            for (int k = 0; k < sequence.Length; k++)
-        //            {
-        //                if (sequence[k] == CachedSequences[i].Raw[j])
-        //                {
-        //                    found = true;
-        //                    continue;
-        //                }
-        //                else
-        //                {
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return matchingIndex;
-        //}
-
-        public IEnumerable<double> Sort(IEnumerable<double> sequence)
+        public List<double> Sort(IList<double> unsorted)
         {
-            // TODO write own sorting algo
-            sequence.ToList().Sort();
+            var sorted = new List<double>();
+            
+            // For purpose of the exercise write our own sorting
+            (unsorted as List<double>).Sort();
 
-            return sequence;
+            return sorted;
         }
     }
 }

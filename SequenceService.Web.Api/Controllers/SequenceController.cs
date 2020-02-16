@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Sequence.Data;
 using Sequence.Services;
+using System;
 using System.Collections.Generic;
 
 namespace Sequence.Web.Api.Controllers
@@ -10,27 +11,28 @@ namespace Sequence.Web.Api.Controllers
     [Route("api/[controller]")]
     public class SequenceController : ControllerBase
     {
-        private readonly ILogger<SequenceController> _logger;
-        private readonly ISequenceService _sequenceService;
+        private readonly ILogger<SequenceController> logger;
+        private readonly ISequenceService sequenceService;
 
-        public SequenceController(ILogger<SequenceController> logger, ISequenceService sequenceService)
+        public SequenceController(ILogger<SequenceController> _logger, ISequenceService _sequenceService)
         {
-            _logger = logger;
-            _sequenceService = sequenceService;
+            logger = _logger;
+            sequenceService = _sequenceService;
         }
 
         // todo : should oribably retrn dto, not entity
 
         [HttpGet]
-        public IEnumerable<ProcessedSequence> Get()
+        public ProcessedSequence Get()
         {
-            return _sequenceService.GetLatest();
+            return sequenceService.GetLatest();
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] IEnumerable<double> sequence)
+        public ActionResult Post([FromBody] List<double> unsortedList)
         {
-            var created = _sequenceService.SaveIfNotExists(sequence);
+            //var unsorted = String.Join(", ", unsortedList.ToArray());
+            var created = sequenceService.SaveIfNotExists(unsortedList);
             return Created("", created); // should only return created if actually created entity, otherwise OK 200
         }
     }

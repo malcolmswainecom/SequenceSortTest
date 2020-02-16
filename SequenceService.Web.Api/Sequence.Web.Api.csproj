@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Sequence.Data\Sequence.Data.csproj" />
     <ProjectReference Include="..\Sequence.Services\Sequence.Services.csproj" />
   </ItemGroup>

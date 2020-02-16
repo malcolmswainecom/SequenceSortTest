@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Sequence.Data.Migrations
 {
@@ -12,8 +13,9 @@ namespace Sequence.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Unsorted = table.Column<double>(nullable: false),
-                    Sorted = table.Column<double>(nullable: false)
+                    Unsorted = table.Column<string>(nullable: true),
+                    Sorted = table.Column<string>(nullable: true),
+                    CreatedDateTime = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
                 {
