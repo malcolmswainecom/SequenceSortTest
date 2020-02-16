@@ -9,5 +9,6 @@ namespace Sequence.Data
         public int Id { get; set; }
         public double Unsorted { get; set; }
         public double Sorted { get; set; }
+        public int BatchId { get; set; }
     }
 }
