@@ -12,31 +12,27 @@ namespace Sequence.Services.Tests.Unit
         IRepository repository = new Repository();
 
         [Fact]
-        public void SaveNewSequence_Expect_SequencToBeReturnedFromCreate()
+        public void SaveNewSequence_Expect_NewSequenceToBeReturnedFromCreate()
         {
             var sequence = new List<double>{ 1, 2, 3 };
 
-            
             var sequenceService = new SequenceService(repository);
-            sequenceService.SaveIfNotExists(sequence);
-
             var sut = sequenceService.SaveIfNotExists(sequence)?.ToList();
 
             Assert.NotNull(sut);
-           // Assert.Equal(sut.Select(x => x.Unsorted).
+            Assert.True(sut.Select(x => x.Unsorted).All(sequence.Contains));
         }
 
         [Fact]
         public void TwoSequencesSameNumbers_Expect_SequenceExists_ToBeTrue()
         {
-            int[] sequence = { 1, 2, 3 };
+            var sequence = new List<double> { 3, 2, 1 };
+            var orderedSequence = new List<double> { 1, 2, 3 };
 
             var sequenceService = new SequenceService(repository);
-            //sequenceService.SaveIfNotExists(sequence);
+            var sut = sequenceService.SaveIfNotExists(sequence)?.ToList();
 
-            //var sut = sequenceService.FindIndex(sequence);
-
-           //Assert.Equal(sut, 0);
+            Assert.True(sut.Select(x => x.Sorted).SequenceEqual(orderedSequence));
         }
     }
 }
