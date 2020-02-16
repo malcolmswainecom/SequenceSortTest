@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sequence.Data;
 
 namespace Sequence.Data.Migrations
 {
     [DbContext(typeof(SequenceDbContext))]
-    partial class SequenceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200216031439_addedTimeStampToBatchTable")]
+    partial class addedTimeStampToBatchTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -7,5 +7,6 @@ namespace Sequence.Data
     public class Batch
     {
         public int BatchId { get; set; }
+        public DateTimeOffset Created { get; set; }
     }
 }
