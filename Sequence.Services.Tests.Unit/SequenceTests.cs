@@ -3,36 +3,69 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using System.Linq;
+using Moq;
 
 namespace Sequence.Services.Tests.Unit
 {
     public class SequenceServiceTests
     {
-        // needs to be injected and mocked
-        IRepository repository = new Repository();
+        IProcessedSequenceDto processedSequenceDto; 
+        Mock<IRepository> repository; 
+        ISorter defaultSorter = new PartitionSorter();
+        IProcessedSequenceDto testProcessedSequenceDto = new ProcessedSequenceDto()
+        { 
+            Id = 1, 
+            CreatedDateTime = DateTimeOffset.Now, 
+            Unsorted = new List<double>() { 3, 2, 1 }, 
+            Sorted = new List<double>() { 1, 2, 3 } 
+        };
+        
+
+        public SequenceServiceTests()
+        {
+            processedSequenceDto = Mock.Of<IProcessedSequenceDto>();
+            repository = new Mock<IRepository>();
+
+            repository.Setup(x => x.Save(It.IsAny<IList<double>>(), It.IsAny<IList<double>>()))
+                .Returns(testProcessedSequenceDto);
+        }
+
 
         [Fact]
-        public void SaveNewSequence_Expect_NewSequenceToBeReturnedFromCreate()
+        public void SaveNewSequence_SequenceExists_Expect_ExistingToBeReturned()
         {
-            var unsorted = new List<double> { 1, 2, 3 };
+            repository.Setup(x => x.FindByUnsorted(It.IsAny<IList<double>>()))
+                .Returns(testProcessedSequenceDto);
 
-            var sequenceService = new SequenceService(repository);
+            var unsorted = testProcessedSequenceDto.Unsorted;
+
+            var sequenceService = new SequenceService(repository.Object, defaultSorter);
             var sut = sequenceService.SaveIfNotExists(unsorted);
 
-            Assert.NotNull(sut);
             Assert.Equal(sut.Unsorted, unsorted);
         }
 
         [Fact]
-        public void TwoSequencesSameNumbers_Expect_SequenceExists_ToBeTrue()
+        public void SaveNewSequence_SequenceDoesntExists_Expect_SequenceToBeSaved()
         {
-            var unsorted = "3,2,1";
-            var sorted = "1,2,3";
+            repository.Setup(x => x.FindByUnsorted(It.IsAny<IList<double>>())).Returns(() => null);
+            testProcessedSequenceDto.Sorted = null;
 
-            var sequenceService = new SequenceService(repository);
-            var sut = sequenceService.SaveIfNotExists(unsorted);
+            var sequenceService = new SequenceService(repository.Object, defaultSorter);
+            var sut = sequenceService.SaveIfNotExists(testProcessedSequenceDto.Unsorted);
 
-            Assert.Equal(sut.Sorted, sorted);
+            repository.Verify(x => x.Save(It.IsAny<IList<double>>(), It.IsAny<IList<double>>()), Times.Once);
+        }
+
+        [Fact]
+        public void CallSequenceSort_Expect_SequenceToSorted()
+        {
+            var sequenceService = new SequenceService(repository.Object, defaultSorter);
+            var sut = sequenceService.Sort(testProcessedSequenceDto.Unsorted);
+
+            Assert.Equal(1, sut[0]);
+            Assert.Equal(2, sut[1]);
+            Assert.Equal(3, sut[2]);
         }
     }
 }

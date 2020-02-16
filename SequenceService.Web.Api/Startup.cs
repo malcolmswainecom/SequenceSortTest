@@ -22,6 +22,8 @@ namespace Sequence.Web.Api
             services.AddControllers();
             services.AddTransient<ISequenceService, SequenceService>();
             services.AddTransient<IRepository, Repository>();
+            services.AddTransient<IProcessedSequenceDto, ProcessedSequenceDto>();
+            services.AddTransient<ISorter, PartitionSorter> ();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

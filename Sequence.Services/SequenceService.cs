@@ -9,18 +9,30 @@ namespace Sequence.Services
     public class SequenceService : ISequenceService
     {
         IRepository repository;
+        ISorter sorter;
 
-        public SequenceService(IRepository _repository)
+        public SequenceService(IRepository _repository, ISorter _sorter)
         {
             repository = _repository;
+            sorter = _sorter;
         }
         
-        public ProcessedSequence GetLatest()
+        /// <summary>
+        /// Get the last inserted sequence
+        /// (if multi user, might not be the one you last inserted!)
+        /// </summary>
+        /// <returns></returns>
+        public IProcessedSequenceDto GetLatest()
         {
             return repository.GetLatest();
         }
 
-        public ProcessedSequence SaveIfNotExists(IList<double> unsorted)
+        /// <summary>
+        /// Save a sequence and its sorted counterpart to the database if not exists
+        /// </summary>
+        /// <param name="unsorted"></param>
+        /// <returns>If exists the existing object, otherwise the Dto of the newly created entity</returns>
+        public IProcessedSequenceDto SaveIfNotExists(IList<double> unsorted)
         {
             var existing = repository.FindByUnsorted(unsorted);
             if (existing != null)
@@ -34,13 +46,20 @@ namespace Sequence.Services
             }
         }
 
-        public List<double> Sort(IList<double> unsorted)
+        /// <summary>
+        /// Abstract away the concerete sort implementation
+        /// </summary>
+        /// <param name="unsorted"></param>
+        /// <returns></returns>
+        public IList<double> Sort(IList<double> unsorted)
         {
-            var sorted = new List<double>();
-            
-            // For purpose of the exercise write our own sorting
-            (unsorted as List<double>).Sort();
+            // shallow copy is okay here
+            var sorted = new List<double>(unsorted);
 
+            // For purpose of the exercise write our own sorting
+            sorter.Sort(sorted, 0, sorted.Count - 1);
+
+            // return the sorted list
             return sorted;
         }
     }

@@ -7,26 +7,42 @@ namespace Sequence.Data
 {
     public class Repository : IRepository
     {
-        public ProcessedSequence FindByUnsorted(IList<double> unsorted)
+        IProcessedSequenceDto processedSequenceDto;
+
+        public Repository(IProcessedSequenceDto _processedSequenceDto)
+        {
+            processedSequenceDto = _processedSequenceDto;
+        }
+        
+        public IProcessedSequenceDto FindByUnsorted(IList<double> unsorted)
         {
             using (var db = new SequenceDbContext())
             {
                 string hashed = String.Join(",", unsorted);
-                return db.ProcessedSequences.Where(x => x.Unsorted == hashed).FirstOrDefault();
+                var found = db.ProcessedSequences.Where(x => x.Unsorted == hashed).FirstOrDefault();
+                return found != null ? processedSequenceDto.FromEntity(found) : null;
             }
         }
 
-        public ProcessedSequence GetLatest()
+        public IProcessedSequenceDto GetLatest()
         {
             using (var db = new SequenceDbContext())
             {
                 var latest = db.ProcessedSequences.Where(x => x.Id == db.ProcessedSequences.Max(x => x.Id)).FirstOrDefault();
-                return latest;
+                return processedSequenceDto.FromEntity(latest);
             }
         }
 
-        public ProcessedSequence Save(IList<double> unsorted, IList<double> sorted)
+        public IProcessedSequenceDto Save(IList<double> unsorted, IList<double> sorted)
         {
+            // sanity check
+            if (unsorted.Count == 0 || unsorted.Count != sorted.Count)
+                throw new Exception("Unexpected parameter values");
+            
+            // Save in an easy to find format
+            // in the real world would save vertically as saving numbers in a string 
+            // is never good practice. 
+            // Would probably also create a hash of the sequence as a lookup
             var newProcessesSequence = new ProcessedSequence()
             {
                 Unsorted = String.Join(",", unsorted),
@@ -34,12 +50,14 @@ namespace Sequence.Data
                 CreatedDateTime = DateTimeOffset.Now
             };
 
+            // Add the entity to the database
             using (var db = new SequenceDbContext())
             {
                 db.ProcessedSequences.Add(newProcessesSequence);
                 db.SaveChanges();
 
-                return newProcessesSequence;
+                // create a Dto from the same entity and return it to the user
+                return processedSequenceDto.FromEntity(newProcessesSequence);
             }
         }
     }

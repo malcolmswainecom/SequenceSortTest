@@ -23,7 +23,7 @@ namespace Sequence.Web.Api.Controllers
         // todo : should oribably retrn dto, not entity
 
         [HttpGet]
-        public ProcessedSequence Get()
+        public IProcessedSequenceDto Get()
         {
             return sequenceService.GetLatest();
         }
