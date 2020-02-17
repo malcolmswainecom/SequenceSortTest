@@ -9,7 +9,7 @@ Run data migration to build a local db in the Sequence.Data project
 From the Package Manager console: Update-database
 
 Run the Sequence.Web.Api project
-Run the Sequence.Web.Api project should load the default swagger UI 
+Set Sequence.Web.Api project as startup and F5. Swagger UI should be loaded by default to expose the WebApi endpoints
 
 
 Remarks
