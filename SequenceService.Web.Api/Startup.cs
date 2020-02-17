@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sequence.Data;
 using Sequence.Services;
+using Microsoft.OpenApi.Models;
 
 namespace Sequence.Web.Api
 {
@@ -24,6 +25,11 @@ namespace Sequence.Web.Api
             services.AddTransient<IRepository, Repository>();
             services.AddTransient<IProcessedSequenceDto, ProcessedSequenceDto>();
             services.AddTransient<ISorter, PartitionSorter> ();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sequence Sort API", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -32,6 +38,17 @@ namespace Sequence.Web.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sequence Sort API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 
