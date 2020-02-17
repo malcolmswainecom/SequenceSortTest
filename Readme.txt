@@ -15,7 +15,4 @@ Run the Sequence.Web.Api project should load the default swagger UI
 Remarks
 Data is saved horizontally - in real application would save vertically and in numeric form using hashing function for a lookup index since checking for existing sequences vertically has some overhead
 
-TODO: Basic console logging is baked in, but would like to add global exception handler with some file logging  
-
-
 
