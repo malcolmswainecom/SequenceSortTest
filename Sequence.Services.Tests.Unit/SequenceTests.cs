@@ -58,14 +58,30 @@ namespace Sequence.Services.Tests.Unit
         }
 
         [Fact]
-        public void CallSequenceSort_Expect_SequenceToSorted()
+        public void CallSequenceSort_Expect_SequenceToSorted1()
         {
             var sequenceService = new SequenceService(repository.Object, defaultSorter);
             var sut = sequenceService.Sort(testProcessedSequenceDto.Unsorted);
 
-            Assert.Equal(1, sut[0]);
-            Assert.Equal(2, sut[1]);
-            Assert.Equal(3, sut[2]);
+            Assert.Equal(sut, new List<double>() { 1, 2, 3});
+        }
+
+        [Fact]
+        public void CallSequenceSort_Expect_SequenceToSorted2()
+        {
+            var sequenceService = new SequenceService(repository.Object, defaultSorter);
+            var sut = sequenceService.Sort(new List<double>() { 5, 4, 3, 2, 1});
+
+            Assert.Equal(sut, new List<double>() { 1, 2, 3, 4, 5 });
+        }
+
+        [Fact]
+        public void CallSequenceSort_Expect_SequenceToSorted3()
+        {
+            var sequenceService = new SequenceService(repository.Object, defaultSorter);
+            var sut = sequenceService.Sort(new List<double>() { 1, 21, 13, 432, 19, 20 });
+
+            Assert.Equal(sut, new List<double>() { 1, 13, 19, 20, 21, 432 });
         }
     }
 }

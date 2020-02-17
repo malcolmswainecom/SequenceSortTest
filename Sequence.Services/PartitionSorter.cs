@@ -1,48 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Sequence.Services
 {
     public class PartitionSorter : ISorter
     {
-        public void Sort(IList<double> data, int l, int r)
+        /// <summary>
+        /// Implmentation of quicksort
+        /// </summary>
+        /// <param name="data">The data sto be sorted</param>
+        /// <param name="l">lower bounds of sort</param>
+        /// <param name="r">upper bounds of sort</param>
+        public void Sort(IList<double> data, int lowerBounds, int upperBounds)
         {
-            int i, j;
-            double x;
+  
+            int lowerIndex = lowerBounds;
+            int upperIndex = upperBounds;
 
-            i = l;
-            j = r;
+            int pivotIndex = (lowerBounds + upperBounds) / 2;
+            double pivotValue = data[pivotIndex];
 
-            x = data[(l + r) / 2]; /* find pivot item */
             while (true)
             {
-                while (data[i] < x)
-                    i++;
-                while (x < data[j])
-                    j--;
-                if (i <= j)
+                while (data[lowerIndex] < pivotValue)
                 {
-                    exchange(data, i, j);
-                    i++;
-                    j--;
+                    lowerIndex++;
                 }
-                if (i > j)
+
+                while (data[upperIndex] > pivotValue)
+                {
+                    upperIndex--;
+                }
+
+                if (lowerIndex <= upperIndex)
+                {
+                    double temp;
+                    temp = data[lowerIndex];
+                    data[lowerIndex] = data[upperIndex];
+                    data[upperIndex] = temp;
+
+                    lowerIndex++;
+                    upperIndex--;
+                }
+                if (lowerIndex > upperIndex)
                     break;
             }
-            if (l < j)
-                Sort(data, l, j);
-            if (i < r)
-                Sort(data, i, r);
-        }
 
-        public void exchange(IList<double> data, int m, int n)
-        {
-            double temporary;
-
-            temporary = data[m];
-            data[m] = data[n];
-            data[n] = temporary;
+            if (lowerBounds < upperIndex)
+                Sort(data, lowerBounds, upperIndex);
+            if (lowerIndex < upperBounds)
+                Sort(data, lowerIndex, upperBounds);
         }
     }
 }
