@@ -14,6 +14,11 @@ namespace Sequence.Data
             processedSequenceDto = _processedSequenceDto;
         }
         
+        /// <summary>
+        /// Check if this exact sequence has already been saved to the database
+        /// </summary>
+        /// <param name="unsorted"></param>
+        /// <returns>The Dto representation if it;s found, otherwise null</returns>
         public IProcessedSequenceDto FindByUnsorted(IList<double> unsorted)
         {
             using (var db = new SequenceDbContext())
@@ -24,6 +29,10 @@ namespace Sequence.Data
             }
         }
 
+        /// <summary>
+        /// Get the latest saved sequence data
+        /// </summary>
+        /// <returns></returns>
         public IProcessedSequenceDto GetLatest()
         {
             using (var db = new SequenceDbContext())
@@ -33,6 +42,12 @@ namespace Sequence.Data
             }
         }
 
+        /// <summary>
+        /// Save the sequence (sorted and unsorted) as an entity back to the database
+        /// </summary>
+        /// <param name="unsorted"></param>
+        /// <param name="sorted"></param>
+        /// <returns>The Dto represenation of the saved entity</returns>
         public IProcessedSequenceDto Save(IList<double> unsorted, IList<double> sorted)
         {
             // sanity check
@@ -40,9 +55,8 @@ namespace Sequence.Data
                 throw new Exception("Unexpected parameter values");
             
             // Save in an easy to find format
-            // in the real world would save vertically as saving numbers in a string 
-            // is never good practice. 
-            // Would probably also create a hash of the sequence as a lookup
+            // in the real world would save vertically as saving numbers in a string is never good practice. 
+            // Would probably also create a hash of the sequence for quicker lookup
             var newProcessesSequence = new ProcessedSequence()
             {
                 Unsorted = String.Join(",", unsorted),
@@ -56,7 +70,7 @@ namespace Sequence.Data
                 db.ProcessedSequences.Add(newProcessesSequence);
                 db.SaveChanges();
 
-                // create a Dto from the same entity and return it to the user
+                // create a Dto from the entity and return it back up the stack
                 return processedSequenceDto.FromEntity(newProcessesSequence);
             }
         }
