@@ -6,6 +6,11 @@ using Microsoft.Extensions.Hosting;
 using Sequence.Data;
 using Sequence.Services;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace Sequence.Web.Api
 {
@@ -39,11 +44,8 @@ namespace Sequence.Web.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            // Enable Swagger Middleware.
             app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sequence Sort API V1");
@@ -52,9 +54,24 @@ namespace Sequence.Web.Api
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
+            // Simple handle all unhandled exceptions and write to file (Serilog config in appsettings)
+            app.UseExceptionHandler(a => a.Run(async context =>
+            {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
 
-            //app.UseAuthorization();
+                // Log with Serilog 
+                // We could also easily log to centralized log server over HTTP
+                Log.Logger.Error(exception, null);
+
+                // Send the result back in JSON
+                // Would need to do something for production with this
+                var result = JsonConvert.SerializeObject(new { error = exception.Message });
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(result);
+            }));
+
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
