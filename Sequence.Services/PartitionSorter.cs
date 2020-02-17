@@ -8,8 +8,8 @@ namespace Sequence.Services
         /// Implmentation of quicksort
         /// </summary>
         /// <param name="data">The data sto be sorted</param>
-        /// <param name="l">lower bounds of sort</param>
-        /// <param name="r">upper bounds of sort</param>
+        /// <param name="lowerBounds">lower bounds of sort</param>
+        /// <param name="upperBounds">upper bounds of sort</param>
         public void Sort(IList<double> data, int lowerBounds, int upperBounds)
         {
   
@@ -33,8 +33,7 @@ namespace Sequence.Services
 
                 if (lowerIndex <= upperIndex)
                 {
-                    double temp;
-                    temp = data[lowerIndex];
+                    double temp = data[lowerIndex];
                     data[lowerIndex] = data[upperIndex];
                     data[upperIndex] = temp;
 
